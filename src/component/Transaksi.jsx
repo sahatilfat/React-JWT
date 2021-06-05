@@ -1,9 +1,9 @@
-import React, { Fragment, useContext } from "react";
+import React, { useContext } from "react";
 import { Redirect } from "react-router";
 import { Jumbotron, Button } from "reactstrap";
 import { AuthContext } from "../App";
 
-function HomeComp() {
+function Transaksi() {
   const { state, dispatch } = useContext(AuthContext);
 
   if (!state.isAuthenticated) {
@@ -13,7 +13,7 @@ function HomeComp() {
   return (
     <div>
       <Jumbotron>
-        <h1 className="display-3">Hello, {state.user}</h1>
+        <h1 className="display-3">Transaksi</h1>
         <p className="lead">
           This is a simple hero unit, a simple Jumbotron-style component for
           calling extra attention to featured content or information.
@@ -31,4 +31,4 @@ function HomeComp() {
   );
 }
 
-export default HomeComp;
+export default Transaksi;

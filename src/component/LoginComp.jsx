@@ -12,11 +12,12 @@ import {
   Col,
   CardImg,
 } from "reactstrap";
+import { Link } from "react-router-dom";
 
 const qs = require("querystring");
 const api = "http://localhost:3001";
 
-function LoginComp() {
+function LoginComp(props) {
   const { dispatch } = useContext(AuthContext);
 
   const initialState = {
@@ -62,6 +63,9 @@ function LoginComp() {
             type: "LOGIN",
             payload: res.data,
           });
+
+          // redirect ke dashboard
+          props.history.push("/dashboard");
         } else {
           setData({
             ...data,
@@ -119,6 +123,9 @@ function LoginComp() {
                 {data.isSubmitting ? "...Loading" : "Login"}
               </Button>
             </Form>
+            <p>
+              Belum punya akun ? <Link to={"register"}>Register</Link>
+            </p>
           </Col>
         </Row>
       </Container>
