@@ -9,7 +9,7 @@ const api = "http://localhost:3001";
 function ListMahasiswa() {
   const [mahasiswa, setMahasiswa] = useState([]);
 
-  const { state } = useContext(AuthContext);
+  const { state, dispatch } = useContext(AuthContext);
 
   const fetchData = () => {
     var config = {
@@ -28,8 +28,19 @@ function ListMahasiswa() {
       });
   };
 
+  const timeout = () => {
+    setTimeout(() => {
+      console.log("token telah berakhir!");
+      dispatch({
+        type: "LOGOUT",
+      });
+    }, state.tokenExpires);
+  };
+
   useEffect(() => {
     fetchData();
+    // eslint-disable-next-line
+    timeout();
     // eslint-disable-next-line
   }, []);
 
