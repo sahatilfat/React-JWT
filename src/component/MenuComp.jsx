@@ -54,6 +54,11 @@ function MenuComp() {
                 TRANSAKSI
               </NavLink>
             </NavItem>
+            <NavItem>
+              <NavLink to={"/mahasiswa"} className="nav-link">
+                MAHASISWA
+              </NavLink>
+            </NavItem>
           </Nav>
           <NavbarText>
             <Button
