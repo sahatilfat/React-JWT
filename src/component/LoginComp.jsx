@@ -13,9 +13,9 @@ import {
   CardImg,
 } from "reactstrap";
 import { Link } from "react-router-dom";
-
 const qs = require("querystring");
 const api = "http://localhost:3001";
+var Recaptcha = require("react-recaptcha");
 
 function LoginComp(props) {
   const { dispatch } = useContext(AuthContext);
@@ -25,9 +25,26 @@ function LoginComp(props) {
     password: "",
     isSubmitting: false,
     errorMessage: null,
+    isVerified: false,
   };
 
   const [data, setData] = useState(initialState);
+
+  // specifying your onload callback function
+  var callback = function () {
+    console.log("Done!!!!");
+  };
+
+  // specifying verify callback function
+  var verifyCallback = function (response) {
+    console.log(response);
+    if (response) {
+      setData({
+        ...data,
+        isVerified: true,
+      });
+    }
+  };
 
   const handleInputChange = (event) => {
     setData({
@@ -38,43 +55,50 @@ function LoginComp(props) {
 
   const handleFormSubmit = (event) => {
     event.preventDefault();
-    setData({
-      ...data,
-      isSubmitting: true,
-      errorMessage: null,
-    });
-
-    const requestBody = {
-      email: data.email,
-      password: data.password,
-    };
-
-    const config = {
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-    };
-
-    axios
-      .post(api + "/auth/api/v1/login", qs.stringify(requestBody), config)
-      .then((res) => {
-        if (res.data.success === true) {
-          dispatch({
-            type: "LOGIN",
-            payload: res.data,
-          });
-
-          // redirect ke dashboard
-          props.history.push("/dashboard");
-        } else {
-          setData({
-            ...data,
-            isSubmitting: false,
-            errorMessage: res.data.Message,
-          });
-        }
-        throw res;
+    if (data.isVerified) {
+      setData({
+        ...data,
+        isSubmitting: true,
+        errorMessage: null,
       });
+
+      const requestBody = {
+        email: data.email,
+        password: data.password,
+      };
+
+      const config = {
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+      };
+
+      axios
+        .post(api + "/auth/api/v1/login", qs.stringify(requestBody), config)
+        .then((res) => {
+          if (res.data.success === true) {
+            dispatch({
+              type: "LOGIN",
+              payload: res.data,
+            });
+
+            // redirect ke dashboard
+            props.history.push("/dashboard");
+          } else {
+            setData({
+              ...data,
+              isSubmitting: false,
+              errorMessage: res.data.Message,
+            });
+          }
+          throw res;
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    } else {
+      console.log("anda diduga robot");
+    }
   };
 
   return (
@@ -118,11 +142,19 @@ function LoginComp(props) {
                   {data.errorMessage}
                 </div>
               )}
-
+              <br />
+              <Recaptcha
+                sitekey="6LeFNxkbAAAAAKgWH_oltzKt3xBdRIeW9sKGjL0r"
+                render="explicit"
+                verifyCallback={verifyCallback}
+                onloadCallback={callback}
+              />
+              <br />
               <Button disabled={data.isSubmitting}>
                 {data.isSubmitting ? "...Loading" : "Login"}
               </Button>
             </Form>
+            <br />
             <p>
               Belum punya akun ? <Link to={"register"}>Register</Link>
             </p>
